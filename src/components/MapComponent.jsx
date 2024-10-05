@@ -117,30 +117,42 @@ const MapComponent = () => {
     });
   };
 
+  // Define smaller bounds to limit map panning to Europe
+  const bounds = [
+    [30, -11], // Southwest corner of Europe (latitude, longitude)
+    [-90, 90],  // Northeast corner of Europe (latitude, longitude)
+  ];
+
   return (
     <div className="relative bg-white rounded-lg shadow-lg p-6">
       <MapContainer
-        center={[20, 0]}
-        zoom={2}
+        center={[23.0225, 72.5714]} // Ahmedabad's coordinates
+        zoom={12}
+        maxBounds={[[22.8, 72.3], [23.2, 72.8]]}
+        maxBoundsViscosity={1.0}
         style={{ height: '500px', width: '100%' }}
         whenCreated={(map) => {
           mapInstance.current = map; // Store the map instance in ref
         }}
       >
         <LayersControl position="topright">
-          <LayersControl.BaseLayer checked name="Satellite">
-            <TileLayer
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='&copy; <a href="https://www.esri.com">Esri & NASA</a>'
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Map View">
+          {/* Map View is the default now */}
+          <LayersControl.BaseLayer checked name="Map View">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
           </LayersControl.BaseLayer>
+
+          {/* Satellite view is available but not checked by default */}
+          <LayersControl.BaseLayer name="Satellite">
+            <TileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution='&copy; <a href="https://www.esri.com">Esri & NASA</a>'
+            />
+          </LayersControl.BaseLayer>
         </LayersControl>
+
         <FeatureGroup>
           <EditControl
             position="topright"
@@ -156,13 +168,12 @@ const MapComponent = () => {
           />
         </FeatureGroup>
       </MapContainer>
-
-      <button
+      {/* <button
         onClick={captureMapArea}
         className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
       >
         Capture Map Area
-      </button>
+      </button> */}
 
       {treeCount !== null && (
         <div className="relative top-4 left-4 bg-blue-600 text-white py-2 px-4 rounded-lg shadow-lg">
