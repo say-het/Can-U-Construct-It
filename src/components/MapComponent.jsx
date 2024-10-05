@@ -12,14 +12,27 @@ const MapComponent = () => {
   // Function to send polygon to the backend
   const sendPolygonToBackend = async (coordinates) => {
     try {
-      const response = await axios.post('http://localhost:5000/count-trees', {
-        coordinates,
+      const response = await fetch('http://localhost:5000/count-trees', {
+        method: 'POST', // Use POST request
+        headers: {
+          'Content-Type': 'application/json', // Set content type to JSON
+        },
+        body: JSON.stringify({ coordinates }), // Send the polygon coordinates in the request body
       });
-      setTreeCount(response.data.tree_count_hectares);
-    } catch (error) { 
-      console.error('Error counting trees:', error);
+  
+      // Check if the response is successful
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log(data) // Parse the JSON from the response
+      setTreeCount(data.estimated_tree_count); // Set the tree count from the response
+    } catch (error) {
+      console.error('Error counting trees:', error); // Log any errors
     }
   };
+  
 
   const handleCreated = (e) => {
     const layer = e.layer;
@@ -58,7 +71,7 @@ const MapComponent = () => {
       {/* Display the Tree Count */}
       {treeCount !== null && (
         <div>
-          <h3>Tree Count in Selected Area: {treeCount} hectares</h3>
+          <h3>Tree Count in Selected Area:  {parseInt(treeCount)}  trees</h3>
         </div>
       )}
     </div>
