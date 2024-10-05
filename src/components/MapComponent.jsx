@@ -3,15 +3,15 @@ import { MapContainer, TileLayer, FeatureGroup, LayersControl } from 'react-leaf
 import 'leaflet/dist/leaflet.css'; // Leaflet CSS
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css'; // Leaflet Draw CSS
+import axios from 'axios';
 import leafletImage from 'leaflet-image'; // Import leaflet-image
-import 'leaflet/dist/leaflet.css';
 
 const MapComponent = () => {
   const [treeCount, setTreeCount] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
   const [points, setPoints] = useState([]);
   const mapInstance = useRef(null); // Store map instance reference
-  const [mapReady, setMapReady] = useState(false); // Map readiness state
+  const [mapLoaded, setMapLoaded] = useState(false); // State to check if map is fully loaded
 
   const sendPolygonToBackend = async (coordinates) => {
     try {
@@ -68,6 +68,7 @@ const MapComponent = () => {
     const geoJsonData = e.layer.toGeoJSON();
     const coordinates = geoJsonData.geometry.coordinates[0];
     
+    // Ensure a polygon with four points is drawn
     if (coordinates.length !== 5) {
       console.warn('Please draw a polygon with exactly four points.');
       return;
@@ -79,33 +80,28 @@ const MapComponent = () => {
     fetchWeatherData(latitude, longitude);
   };
 
+  // Wait for the map to fully load all layers before capturing
   useEffect(() => {
     if (mapInstance.current) {
-      let tileLoadCount = 0;
-      let totalTiles = 0;
-
-      // Listen for 'tileloadstart' to track total number of tiles to load
-      mapInstance.current.on('tileloadstart', () => {
-        totalTiles += 1;
+      mapInstance.current.on('load', () => {
+        setMapLoaded(true);
       });
 
-      // Listen for 'tileload' to track how many tiles have been loaded
       mapInstance.current.on('tileload', () => {
-        tileLoadCount += 1;
-        if (tileLoadCount === totalTiles) {
-          setMapReady(true); // All tiles loaded
-        }
+        setMapLoaded(true);
       });
     }
-  }, [mapInstance.current]);
+  }, []);
 
   const captureMapArea = () => {
-    if (!mapInstance.current || !mapReady) {
+    const map = mapInstance.current; // Access the map instance
+    
+    if (!map || !mapLoaded) {
       console.warn('Map is not fully loaded or instance is not available.');
       return;
     }
 
-    leafletImage(mapInstance.current, (err, canvas) => {
+    leafletImage(map, (err, canvas) => {
       if (err) {
         console.error('Error capturing map:', err);
         return;
@@ -128,7 +124,7 @@ const MapComponent = () => {
         zoom={2}
         style={{ height: '500px', width: '100%' }}
         whenCreated={(map) => {
-          mapInstance.current = map;
+          mapInstance.current = map; // Store the map instance in ref
         }}
       >
         <LayersControl position="topright">
