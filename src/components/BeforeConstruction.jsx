@@ -21,8 +21,8 @@ const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, 
   };
 
   return (
-    <div className="w-full max-w-7xl bg-white shadow-2xl rounded-2xl p-10 mb-8 h-[450px] overflow-hidden transition duration-300 ease-in-out transform hover:scale-[1.02]">
-      <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center"></h2>
+    <div className="">
+      <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">Current</h2>
       
       <div className="flex flex-wrap justify-between items-center h-full">
         {/* AQI */}
