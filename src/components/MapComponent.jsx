@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; // Leaflet CSS
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css'; // Leaflet Draw CSS
@@ -29,10 +29,23 @@ const MapComponent = () => {
   return (
     <div className="relative bg-white rounded-lg shadow-lg p-6">
       <MapContainer center={[20, 0]} zoom={2} style={{ height: '500px', width: '100%' }}>
-        <TileLayer
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          attribution='&copy; <a href="https://www.esri.com">Esri & NASA</a>'
-        />
+        <LayersControl position="topright">
+          {/* Satellite View Layer */}
+          <LayersControl.BaseLayer checked name="Satellite">
+            <TileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution='&copy; <a href="https://www.esri.com">Esri & NASA</a>'
+            />
+          </LayersControl.BaseLayer>
+
+          {/* Map View Layer with City Names */}
+          <LayersControl.BaseLayer name="Map View">
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
         <FeatureGroup>
           <EditControl position="topright" onCreated={handleCreated} draw={{ rectangle: true, polygon: true }} />
         </FeatureGroup>
