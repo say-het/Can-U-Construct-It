@@ -52,7 +52,7 @@ const MapComponent = () => {
       </MapContainer>
 
       {treeCount !== null && (
-        <div className="absolute top-4 left-4 bg-blue-600 text-white py-2 px-4 rounded-lg shadow-lg">
+        <div className="relative top-4 left-4 bg-blue-600 text-white py-2 px-4 rounded-lg shadow-lg">
           <h3 className="text-xl">Tree Count: {parseInt(treeCount)} trees</h3>
         </div>
       )}
