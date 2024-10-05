@@ -1,7 +1,25 @@
 import React from 'react';
 import { FaWind, FaCloudSun, FaTree, FaTemperatureHigh, FaTint, FaWater } from 'react-icons/fa';
 
-const BeforeConstruction = () => {
+const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, soilType }) => {
+  // Function to interpret AQI level
+  const getAqiDescription = (aqi) => {
+    switch (aqi) {
+      case 1:
+        return 'Good';
+      case 2:
+        return 'Fair';
+      case 3:
+        return 'Moderate';
+      case 4:
+        return 'Poor';
+      case 5:
+        return 'Very Poor';
+      default:
+        return 'Unknown';
+    }
+  };
+
   return (
     <div className="w-full max-w-7xl bg-white shadow-2xl rounded-2xl p-10 mb-8 h-[450px] overflow-hidden transition duration-300 ease-in-out transform hover:scale-[1.02]">
       <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">Before Construction</h2>
@@ -12,7 +30,7 @@ const BeforeConstruction = () => {
           <FaWater className="text-blue-600 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Air Quality Index (AQI)</h3>
-            <p className="text-gray-600">50 (Good)</p>
+            <p className="text-gray-600">{aqi ? `${aqi} (${getAqiDescription(aqi)})` : 'Loading...'}</p>
           </div>
         </div>
 
@@ -21,7 +39,7 @@ const BeforeConstruction = () => {
           <FaCloudSun className="text-blue-600 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Humidity</h3>
-            <p className="text-gray-600">60%</p>
+            <p className="text-gray-600">{humidity != null ? `${humidity}%` : 'Loading...'}</p>
           </div>
         </div>
 
@@ -30,7 +48,7 @@ const BeforeConstruction = () => {
           <FaTree className="text-blue-600 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Number of Trees</h3>
-            <p className="text-gray-600">150</p>
+            <p className="text-gray-600">{treeCount !== null ? `${treeCount}` : 'Loading...'}</p>
           </div>
         </div>
 
@@ -39,7 +57,7 @@ const BeforeConstruction = () => {
           <FaTemperatureHigh className="text-blue-600 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Temperature</h3>
-            <p className="text-gray-600">25°C</p>
+            <p className="text-gray-600">{temperature != null ? `${temperature}°C` : 'Loading...'}</p>
           </div>
         </div>
 
@@ -48,7 +66,7 @@ const BeforeConstruction = () => {
           <FaWind className="text-blue-600 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Wind Speed</h3>
-            <p className="text-gray-600">10 km/h</p>
+            <p className="text-gray-600">{windSpeed != null ? `${windSpeed} km/h` : 'Loading...'}</p>
           </div>
         </div>
 
@@ -57,7 +75,7 @@ const BeforeConstruction = () => {
           <FaTint className="text-blue-600 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Soil Type</h3>
-            <p className="text-gray-600">Loamy</p>
+            <p className="text-gray-600">{soilType ? soilType : 'Loading...'}</p>
           </div>
         </div>
       </div>

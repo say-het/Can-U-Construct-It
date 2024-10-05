@@ -18,9 +18,7 @@ const App = () => {
         </div>
 
         {/* Before Construction section */}
-        <div className="w-full max-w-7xl bg-white shadow-xl rounded-xl p-8 mb-12">
-          <BeforeConstruction />
-        </div>
+        
       </div>
     </div>
   );

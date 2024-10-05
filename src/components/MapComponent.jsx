@@ -1,17 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, FeatureGroup, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; // Leaflet CSS
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css'; // Leaflet Draw CSS
 import axios from 'axios';
 import leafletImage from 'leaflet-image'; // Import leaflet-image
+import BeforeConstruction from './BeforeConstruction';
 
 const MapComponent = () => {
   const [treeCount, setTreeCount] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
   const [points, setPoints] = useState([]);
   const mapInstance = useRef(null); // Store map instance reference
-  const [mapLoaded, setMapLoaded] = useState(false); // State to check if map is fully loaded
 
   const sendPolygonToBackend = async (coordinates) => {
     try {
@@ -80,35 +80,23 @@ const MapComponent = () => {
     fetchWeatherData(latitude, longitude);
   };
 
-  // Wait for the map to fully load all layers before capturing
-  useEffect(() => {
-    if (mapInstance.current) {
-      mapInstance.current.on('load', () => {
-        setMapLoaded(true);
-      });
-
-      mapInstance.current.on('tileload', () => {
-        setMapLoaded(true);
-      });
-    }
-  }, []);
-
   const captureMapArea = () => {
     const map = mapInstance.current; // Access the map instance
-    
-    if (!map || !mapLoaded) {
-      console.warn('Map is not fully loaded or instance is not available.');
+  
+    // Check if the map instance is available
+    if (!map) {
+      console.error('Map instance is not available.');
       return;
     }
-
+  
     leafletImage(map, (err, canvas) => {
       if (err) {
         console.error('Error capturing map:', err);
         return;
       }
-      
+  
       const imgData = canvas.toDataURL('image/png');
-
+  
       // Create a link to download the image
       const downloadLink = document.createElement('a');
       downloadLink.href = imgData;
@@ -116,7 +104,7 @@ const MapComponent = () => {
       downloadLink.click();
     });
   };
-
+  
   return (
     <div className="relative bg-white rounded-lg shadow-lg p-6">
       <MapContainer
@@ -163,7 +151,7 @@ const MapComponent = () => {
       >
         Capture Map Area
       </button>
-
+{/* 
       {treeCount !== null && (
         <div className="relative top-4 left-4 bg-blue-600 text-white py-2 px-4 rounded-lg shadow-lg">
           <h3 className="text-xl">Tree Count: {parseInt(treeCount)} trees</h3>
@@ -179,8 +167,20 @@ const MapComponent = () => {
           <p>Wind Direction: {weatherData.windDeg}°</p>
           <p>AQI: {getAqiDescription(weatherData.aqi)}</p>
         </div>
-      )}
+      )} */}
+<div className="w-full max-w-7xl bg-white shadow-xl rounded-xl p-8 mb-12">
+  <BeforeConstruction
+    aqi={weatherData?.aqi}
+    humidity={weatherData?.humidity}
+    treeCount={treeCount}
+    temperature={weatherData?.temperature}
+    windSpeed={weatherData?.windSpeed}
+    soilType={"Clay Loam"} // This can be dynamically fetched or passed
+  />
+</div>
+
     </div>
+    
   );
 };
 
