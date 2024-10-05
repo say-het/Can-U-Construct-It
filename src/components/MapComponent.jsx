@@ -29,8 +29,8 @@ const MapComponent = () => {
 
   const fetchWeatherData = async (latitude, longitude) => {
     const apiKey = '30f7fd6107dee07d20a062662a888268';
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
-    const airPollutionUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${apiKey}`;
+    const weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}';
+    const airPollutionUrl = 'https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${apiKey}';
     
     try {
       const weatherResponse = await axios.get(weatherUrl);
