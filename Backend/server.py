@@ -1,10 +1,13 @@
 # app.py
 import ee
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import cross_origin, CORS
 from earthquackmodel import predict_earthquake
 from floodmodel import predict_flood_occurred
+from ess import calculate_sustainability_score
+from generateess import generate_report_with_gemini ,  create_pdf_with_table
+
 
 app = Flask(__name__)
 CORS(app)
@@ -113,7 +116,42 @@ def get_flood_quackeReport():
     except Exception as e:
         print("Error:", e)
         return jsonify({"status": "error", "message": str(e)}), 500
+@app.route("/getEssScore", methods=["POST"]) 
+@cross_origin()
+def getEssScore():
+    try:
+        print("yesdjgdhfhdtfth")
+        data = request.get_json()
+        print(data)
+        ess = calculate_sustainability_score(
+            air_quality=data['air_quality'],
+            temperature=data['temperature'],
+            humidity=data['humidity'],
+            soil_type=data['soil_type'],
+            flood_risk=int(data['flood_risk']),
+            seismic_activity=data['seismic_activity'],
+            wind_patterns=data['wind_patterns']
+        )
+        report_data = {
+            "air_quality": data['air_quality'],
+            "temperature": data['temperature'],
+            "humidity": data['humidity'],
+            "soil_type": data['soil_type'],
+            "flood_risk":int(data['flood_risk']),
+            "seismic_activity": data['seismic_activity'],
+            "wind_patterns": data['wind_patterns'],
+            "ess_score": ess
+        }
+        report = generate_report_with_gemini(report_data)
+        pdf_filename = create_pdf_with_table(report, report_data)
+
+        # Return the generated PDF as an attachment
+        return send_file(pdf_filename, as_attachment=True)
     
+    except Exception as e:
+        print("Error generating ESS report:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True,port=5000,host='0.0.0.0')
