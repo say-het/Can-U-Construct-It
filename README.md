@@ -99,12 +99,20 @@ Once a building type is selected, the user is prompted to fill out specific form
 Earth Engine Dataset for Tree Counting (Forest Cover)
 https://developers.google.com/earth-engine/datasets/catalog/UMD_hansen_global_forest_change_2023_v1_11
 
-Earthquake Risk Data (Random Forest AI model)
+Earthquake Risk Data (Random Forest AI model) (trained by us)
 https://www.kaggle.com/datasets/parulpandey/indian-earthquakes-dataset2018-onwards
 
-Flood Risk Data (Random Forest AI model)
+Flood Risk Data (Random Forest AI model) (trained by us)
 https://www.kaggle.com/datasets/s3programmer/flood-risk-in-india
 
+Weather and Air Pollution Data API
+https://api.openweathermap.org
+
+Soil Type Data API
+https://api.allorigins.win
+
+Count the Buildings API
+http://overpass-api.de/
 
 
 
