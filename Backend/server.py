@@ -142,6 +142,9 @@ def score():
         print(e)
 
 
+
+
+
 @app.route("/getEssScore", methods=["POST"]) 
 @cross_origin()
 def getEssScore():
