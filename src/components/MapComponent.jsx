@@ -20,6 +20,8 @@
     const [points, setPoints] = useState([]);
     const [essScore, setEssScore] = useState(null);
     const [buildCount , setBuildingCount] = useState(null);
+    const [latitude, setLatitude] = useState(null); // State for latitude
+    const [longitude, setLongitude] = useState(null); 
     const [essData, setEssData] = useState({
       air_quality: null,
       temperature: null,
@@ -58,14 +60,27 @@
       const fetchEssScore = async () => {
         try {
           console.log("first");
-          console.log(essData)
+          console.log(points)
+          // Update essData to include latitude and longitude
+          const latitude = points.length > 0 ? points[0][1] : null; // Get latitude from points
+          const longitude = points.length > 0 ? points[0][0] : null; // Get longitude from points
+          // console.log("first")
+          // console.log(latitude)
+          // console.log(longitude)
+          const essDataWithCoordinates = {
+            ...essData,
+            lat: latitude,
+            lon: longitude,
+          };
+          console.log(essDataWithCoordinates);
+      
           // Perform the POST request using fetch
           const response = await fetch('http://localhost:5000/score', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(essData),
+            body: JSON.stringify(essDataWithCoordinates),
           });
       
           // Check if the response status is OK
@@ -84,7 +99,6 @@
           console.error('Error:', error);
         }
       };
-      
 
       const fetchSoilData = async (coordinates) => {
           try {
@@ -129,19 +143,27 @@
 
     const fetchEssReport = async () => {
       try {
-        console.log(essData)
+        // Add latitude and longitude to essData before sending it to the backend
+        const essDataWithCoordinates = {
+          ...essData,  // Keep the existing ESS data
+          lat: latitude,  // Add latitude from state
+          lon: longitude  // Add longitude from state
+        };
+    
+        console.log('ESS Data with Coordinates:', essDataWithCoordinates);
+    
         const essResponse = await fetch('http://localhost:5000/getEssScore', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(essData),  // Send the essData stored in state
+          body: JSON.stringify(essDataWithCoordinates),  // Send the updated ESS data with coordinates
         });
-
+    
         if (!essResponse.ok) {
           throw new Error('Network response for ESS score was not ok');
         }
-        
+    
         const essDataResponse = await essResponse.blob();  // PDF as blob
         
         // Create a link to download the PDF file
@@ -152,11 +174,12 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    
       } catch (error) {
         console.error('Error fetching ESS report:', error);
       }
     };
-
+    
     const sendPolygonToBackend = async (coordinates) => {
       try {
         const response = await fetch('http://localhost:5000/count-trees', {
@@ -275,8 +298,17 @@
         return;
       }
       setPoints(coordinates);
+      
 
       const [longitude, latitude] = coordinates[0];
+      setLatitude(latitude);
+      setLongitude(longitude);
+  // setEssData((prevEssData) => ({
+  //   ...prevEssData,
+  //   lat: latitude,
+  //   lon: longitude,
+  // }));
+
       sendPolygonToBackend(coordinates);
       sendPolygonToBackendForBuildings(coordinates);
       fetchSoilData(coordinates)

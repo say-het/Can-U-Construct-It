@@ -48,7 +48,7 @@ def generate_report_with_gemini(data):
     return reportText
 
 # Function to create a PDF with table and report
-def create_pdf_with_table(report_text, data, file_name='Environmental_Sustainability_Report.pdf'):
+def create_pdf_with_table(report_text, data, image_filename, file_name='Environmental_Sustainability_Report.pdf'):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
@@ -62,6 +62,12 @@ def create_pdf_with_table(report_text, data, file_name='Environmental_Sustainabi
     pdf.cell(200, 10, txt="Generated Report for Ahmedabad, Nirma University", ln=True, align='C')
 
     pdf.ln(10)
+
+    # Add the image to the PDF
+    pdf.image(image_filename, x=10, y=30, w=190)  # Adjust x, y, and w as necessary
+
+    # Add vertical space after the image
+    pdf.ln(200)  # Adjust the value as needed to ensure there's enough space for the text
 
     # Table Header
     pdf.set_font('Arial', 'B', 12)
@@ -101,7 +107,6 @@ def create_pdf_with_table(report_text, data, file_name='Environmental_Sustainabi
     # Save the PDF
     pdf.output(file_name)
     return file_name
-    print(f"PDF report created: {file_name}")
 
 if __name__ == "__main__":
     # Example data

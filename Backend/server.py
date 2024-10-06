@@ -8,7 +8,7 @@ from floodmodel import predict_flood_occurred
 from ess import calculate_sustainability_score
 import requests
 from generateess import generate_report_with_gemini ,  create_pdf_with_table
-
+from imageGenerate import generate_marked_image
 
 app = Flask(__name__)
 CORS(app)
@@ -147,9 +147,9 @@ def score():
 
 @app.route("/getEssScore", methods=["POST"]) 
 @cross_origin()
-def getEssScore():
-    try:
-        print("yesdjgdhfhdtfth")
+def getEssScore() : 
+    try :
+        print("yes Score Is called") 
         data = request.get_json()
         print(data)
         ess = calculate_sustainability_score(
@@ -161,25 +161,82 @@ def getEssScore():
             seismic_activity=data['seismic_activity'],
             wind_patterns=data['wind_patterns']
         )
+
+        print(ess)
         report_data = {
             "air_quality": data['air_quality'],
             "temperature": data['temperature'],
             "humidity": data['humidity'],
             "soil_type": data['soil_type'],
-            "flood_risk":int(data['flood_risk']),
+            "flood_risk": data['flood_risk'],
             "seismic_activity": data['seismic_activity'],
             "wind_patterns": data['wind_patterns'],
             "ess_score": ess
         }
-        report = generate_report_with_gemini(report_data)
-        pdf_filename = create_pdf_with_table(report, report_data)
+        # latitude = 23.016849
+        # longitude = 72.47732
+        # marked_image = generate_marked_image(latitude,longitude)
+        # report = generate_report_with_gemini(report_data)
 
-        # Return the generated PDF as an attachment
+        # pdf_filename = create_pdf_with_table(report, report_data)
+
+        # return send_file(pdf_filename, as_attachment=True)
+        latitude = data['lat']
+        longitude = data['lon']
+        
+        # Generate marked image
+        print("yes Score Is called 2") 
+        marked_image = generate_marked_image(latitude, longitude)
+        image_filename = "marked_location_tile.png"
+        if marked_image:
+            marked_image.save(image_filename)
+
+        print("yes Score Is called 3") 
+        # Generate report
+        report = generate_report_with_gemini(report_data)
+
+        # Create PDF with image
+        pdf_filename = create_pdf_with_table(report, report_data, image_filename)
+
         return send_file(pdf_filename, as_attachment=True)
+    except : 
+        print("YeS score is not called")
+# def getEssScore():
+#     try:
+#         print("yesdjgdhfhdtfth")
+#         data = request.get_json()
+#         print(data)
+#         ess = calculate_sustainability_score(
+#             air_quality=data['air_quality'],
+#             temperature=data['temperature'],
+#             humidity=data['humidity'],
+#             soil_type=data['soil_type'],
+#             flood_risk=int(data['flood_risk']),
+#             seismic_activity=data['seismic_activity'],
+#             wind_patterns=data['wind_patterns']
+#         )
+#         report_data = {
+#             "air_quality": data['air_quality'],
+#             "temperature": data['temperature'],
+#             "humidity": data['humidity'],
+#             "soil_type": data['soil_type'],
+#             "flood_risk":int(data['flood_risk']),
+#             "seismic_activity": data['seismic_activity'],
+#             "wind_patterns": data['wind_patterns'],
+#             "ess_score": ess
+#         }
+#         report = generate_report_with_gemini(report_data)
+#         pdf_filename = create_pdf_with_table(report, report_data)
+
+#         # Return the generated PDF as an attachment
+#         return send_file(pdf_filename, as_attachment=True)
     
-    except Exception as e:
-        print("Error generating ESS report:", e)
-        return jsonify({"status": "error", "message": str(e)}), 500
+#     except Exception as e:
+#         print("Error generating ESS report:", e)
+#         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
 
 @app.route('/count-buildings', methods=['POST'])
 @cross_origin()
