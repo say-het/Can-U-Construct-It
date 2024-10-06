@@ -382,18 +382,24 @@
           onClick={fetchEssReport}  // Call fetchEssReport on click
           className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
         >
-          ESS 
+          Generate Report 
         </button>
-        <p>{essScore}</p>
-        <FactoryForm onSubmit={handleFormSubmit} />
+        <p>Environmental Sustainibility Score: {essScore}</p>
 
 {/* Pass the calculated factory data to ConstructionData */}
-<ConstructionData
-  weatherData={weatherData}
-  treeCount={treeCount}
-  buildCount={buildCount}
-  factoryData={factoryData} // Pass the factoryData state
-/>
+<BeforeConstruction
+      aqi={weatherData?.aqi}
+      temperature={weatherData?.temperature}
+      windSpeed={weatherData?.windSpeed}
+      humidity={weatherData?.humidity}
+      magnitude={weatherData?.magnitude}
+      treeCount={treeCount}
+      seismicActivity={weatherData?.seismicActivity}
+      floodPrediction={weatherData?.floodPrediction}
+      buildCount={buildCount}
+      soilType={mostProbableSoilType}
+    />
+        <FactoryForm onSubmit={handleFormSubmit} />
         
       
       </div>

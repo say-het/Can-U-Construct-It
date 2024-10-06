@@ -20,7 +20,7 @@ const App = () => {
         <div className="w">
           <h2 className="text-3xl font-extrabold text-blue-700 mb-6 text-center">Interactive Map</h2>
           <MapComponent />
-          <EnvironmentalImpactForm />
+          {/* <EnvironmentalImpactForm /> */}
           
           
         </div>

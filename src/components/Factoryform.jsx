@@ -263,7 +263,7 @@ const FactoryForm = () => {
         </button>
       </form>
 
-      {environmentalImpact && (
+      {'' && (
         <div className="mt-6">
           <h3 className="text-xl font-bold">Impact Results</h3>
           <p>Total Emissions from Fuel: {environmentalImpact.totalEmissions} kg CO₂</p>
