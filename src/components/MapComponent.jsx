@@ -29,24 +29,81 @@ const MapComponent = () => {
       console.error('Error counting trees:', error);
     }
   };
-
   const fetchWeatherData = async (latitude, longitude) => {
     const apiKey = '30f7fd6107dee07d20a062662a888268';
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
     const airPollutionUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${apiKey}`;
-    
+
     try {
+      // Fetch weather data
       const weatherResponse = await axios.get(weatherUrl);
       const airPollutionResponse = await axios.get(airPollutionUrl);
+
+      // Prepare the data for the FloodReport request
+      const floodData = {
+        Latitude: latitude,
+        Longitude: longitude,
+        Rainfall: weatherResponse.data.rain ? weatherResponse.data.rain['1h'] || 0 : 0, // Example rainfall data
+        Temperature: weatherResponse.data.main.temp,
+        Humidity: weatherResponse.data.main.humidity,
+        RiverDischarge: 300, // Replace with actual river discharge data
+        WaterLevel: 10, // Replace with actual water level data
+        Elevation: 500, // Replace with actual elevation data
+        LandCover: "Urban", // Example land cover type
+        SoilType: "Clay", // Example soil type
+        PopulationDensity: 1000, // Example population density
+        Infrastructure: "Developed", // Example infrastructure type
+        HistoricalFloods: 2 // Example historical flood count
+      };
+
+      // Fetch earthquake data from the Flask server
+      const earthquakeResponse = await fetch('http://localhost:5000/getQuackReport', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Latitude: latitude,
+          Longitude: longitude,
+        }),
+      });
+
+      if (!earthquakeResponse.ok) {
+        throw new Error('Network response for earthquake data was not ok');
+      }
+
+      const earthquakeData = await earthquakeResponse.json();
+      console.log(earthquakeData)
+
+      // Fetch flood data from the Flask server
+      const floodResponse = await fetch('http://localhost:5000/FloodReport', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(floodData),
+      });
+
+      if (!floodResponse.ok) {
+        throw new Error('Network response for flood data was not ok');
+      }
+
+      const floodDataResponse = await floodResponse.json();
+      console.log(floodDataResponse)
+      // Set the weather, earthquake, and flood data in the state
       setWeatherData({
         temperature: weatherResponse.data.main.temp,
         humidity: weatherResponse.data.main.humidity,
         windSpeed: weatherResponse.data.wind.speed,
         windDeg: weatherResponse.data.wind.deg,
         aqi: airPollutionResponse.data.list[0].main.aqi,
+        depth: earthquakeData.Depth,
+        magnitude: earthquakeData.Magnitude,
+        seismicActivity: earthquakeData.Seismic_Activity,
+        floodPrediction: floodDataResponse['Flood Will Ocuur Or Not']
       });
     } catch (error) {
-      console.error('Error fetching weather data:', error);
+      console.error('Error fetching weather, earthquake, or flood data:', error);
     }
   };
 

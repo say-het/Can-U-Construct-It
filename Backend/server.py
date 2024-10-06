@@ -2,10 +2,12 @@
 import ee
 import json
 from flask import Flask, request, jsonify
-from flask_cors import cross_origin
+from flask_cors import cross_origin, CORS
+from earthquackmodel import predict_earthquake
+from floodmodel import predict_flood_occurred
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 
 projectid = 'ee-jays7'
 
@@ -62,6 +64,56 @@ def count_trees_in_area():
     estimated_tree_count = count_trees(polygon_coords)
 
     return jsonify({'estimated_tree_count': estimated_tree_count})
+
+
+@app.route("/getQuackReport", methods=["POST"])
+@cross_origin()
+def get_earth_quackeReport():
+    try:
+        # Get JSON data from the request
+        data = request.get_json()
+        latitude = data.get('Latitude')
+        longitude = data.get('Longitude')
+
+        print("Received Latitude:", latitude)
+        print("Received Longitude:", longitude)
+        Depth , Magnitude  , Seismic_Activity = predict_earthquake(latitude,longitude)
+        print(Depth, Magnitude, Seismic_Activity)
+        # Process the data (this is where you would implement your logic)
+        return jsonify({"status": "success", "Depth": Depth, "Magnitude": Magnitude , "Seismic_Activity" : Seismic_Activity}), 200
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app.route('/FloodReport',methods = ["POST"])
+@cross_origin()
+def get_flood_quackeReport():
+    try :
+        print("yes")
+        data = request.get_json()
+        print(data)
+        input_data = {
+            'Latitude': data['Latitude'],
+            'Longitude': data['Longitude'],
+            'Rainfall (mm)': data['Rainfall'],
+            'Temperature (°C)': data['Temperature'],
+            'Humidity (%)': data['Humidity'],
+            'River Discharge (m³/s)': data['RiverDischarge'],
+            'Water Level (m)': data['WaterLevel'],
+            'Elevation (m)': data['Elevation'],
+            'Land Cover': data['LandCover'],
+            'Soil Type': data['SoilType'],
+            'Population Density': data['PopulationDensity'],
+            'Infrastructure': data['Infrastructure'],
+            'Historical Floods': data['HistoricalFloods']
+        }
+        predict_flood = predict_flood_occurred(input_data)
+        print(predict_flood)
+        return jsonify({"Flood Will Ocuur Or Not" : f"{predict_flood}"}),200
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
 
 if __name__ == "__main__":
     app.run(debug=True,port=5000,host='0.0.0.0')
