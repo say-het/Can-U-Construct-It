@@ -126,7 +126,6 @@ def score():
     try:
         print("WOEKJN")
         data = request.get_json()
-
         ess = calculate_sustainability_score(
             air_quality=data['air_quality'],
             temperature=data['temperature'],

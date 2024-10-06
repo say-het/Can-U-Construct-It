@@ -83,7 +83,7 @@ const MapComponent = () => {
           } else {
             setError("Unexpected response structure");
           }
-        } catch (err) {
+        } catch (err) { 
           // setError("Error fetching soil data");
           console.error(err);
         }
