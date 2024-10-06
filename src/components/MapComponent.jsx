@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, FeatureGroup, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, LayersControl, WMSTileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; // Leaflet CSS
 import { EditControl } from 'react-leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css'; // Leaflet Draw CSS
@@ -269,45 +269,96 @@ const MapComponent = () => {
 
   return (
     <div className="relative bg-white rounded-lg shadow-lg p-6">
-      <MapContainer
-        center={[23.0225, 72.5714]} // Ahmedabad's coordinates
-        zoom={12}
-        maxBounds={[[22.8, 72.3], [23.2, 72.8]]}
-        maxBoundsViscosity={1.0}
-        style={{ height: '500px', width: '100%' }}
-        whenCreated={(map) => {
-          mapInstance.current = map; // Store the map instance in ref
-        }}
-      >
-        <LayersControl position="topright">
-          <LayersControl.BaseLayer checked name="Map View">
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Satellite">
-            <TileLayer
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='&copy; <a href="https://www.esri.com">Esri & NASA</a>'
-            />
-          </LayersControl.BaseLayer>
-        </LayersControl>
-        <FeatureGroup>
-          <EditControl
-            position="topright"
-            onCreated={handleCreated}
-            draw={{
-              rectangle: true,
-              polygon: true,
-              circle: false,
-              marker: false,
-              polyline: false,
-              circlemarker: false,
-            }}
-          />
-        </FeatureGroup>
-      </MapContainer>
+    <MapContainer
+  center={[23.0225, 72.5714]} // Ahmedabad's coordinates
+  zoom={12}
+  maxBounds={[[22.8, 72.3], [23.2, 72.8]]}
+  maxBoundsViscosity={1.0}
+  style={{ height: '500px', width: '100%' }}
+  whenCreated={(map) => {
+    mapInstance.current = map; // Store the map instance in ref
+  }}
+>
+  <LayersControl position="topright">
+    {/* Base Layers */}
+    <LayersControl.BaseLayer checked name="Map View">
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+    </LayersControl.BaseLayer>
+
+    <LayersControl.BaseLayer name="Satellite">
+      <TileLayer
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+        attribution='&copy; <a href="https://www.esri.com">Esri & NASA</a>'
+      />
+    </LayersControl.BaseLayer>
+    <LayersControl.BaseLayer name="flood">
+    <WMSTileLayer
+  url="https://floodmap.modaps.eosdis.nasa.gov/arcgis/services/Flood/Current/MapServer/WMSServer"
+  layers="1"
+  format="image/png"
+  transparent={true}
+/>
+
+    </LayersControl.BaseLayer>
+
+    {/* Environmental Layers */}
+    <LayersControl.Overlay name="Air Quality">
+      <TileLayer
+        url="https://tiles.aqicn.org/tiles/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://waqi.info/">World Air Quality Index Project</a>'
+      />
+    </LayersControl.Overlay>
+
+    <LayersControl.Overlay name="Global Surface Water">
+      <TileLayer
+        url="https://global-surface-water.appspot.com/tiles/dynamic/{z}/{x}/{y}.png"
+        attribution='&copy; European Commission Joint Research Centre (JRC)'
+      />
+    </LayersControl.Overlay>
+
+    <LayersControl.Overlay name="Flood Risk Zones">
+      <TileLayer
+        url="https://floodtiles.rivergiant.com/tiles/{z}/{x}/{y}.png"
+        attribution='&copy; RiverGiant.com'
+      />
+    </LayersControl.Overlay>
+
+    <LayersControl.Overlay name="Nighttime Lights">
+      <TileLayer
+        url="https://tiles.nightlights.io/tiles/{z}/{x}/{y}.png"
+        attribution='&copy; NASA'
+      />
+    </LayersControl.Overlay>
+
+    <LayersControl.Overlay name="Protected Areas">
+      <TileLayer
+        url="https://protectedplanet.net/tiles/{z}/{x}/{y}.png"
+        attribution='&copy; Protected Planet (WDPA)'
+      />
+    </LayersControl.Overlay>
+
+  </LayersControl>
+
+  {/* Drawing tools */}
+  <FeatureGroup>
+    <EditControl
+      position="topright"
+      onCreated={handleCreated}
+      draw={{
+        rectangle: true,
+        polygon: true,
+        circle: false,
+        marker: false,
+        polyline: false,
+        circlemarker: false,
+      }}
+    />
+  </FeatureGroup>
+</MapContainer>
+
 
       <button
         onClick={fetchEssReport}  // Call fetchEssReport on click
