@@ -10,6 +10,8 @@ import DuringConstruction from './DuringConstruction';
 import AfterConstruction from './AfterConstruction';
 import ConstructionCarousel from './Curosel';
 // import setErr
+import ConstructionData from './ConstructionData';
+
 
 const MapComponent = () => {
   const [treeCount, setTreeCount] = useState(null);
@@ -367,21 +369,14 @@ const MapComponent = () => {
         ESS 
       </button>
       <p>{essScore}</p>
-      <BeforeConstruction
-        aqi={weatherData?.aqi}
-        temperature={weatherData?.temperature}
-        windSpeed={weatherData?.windSpeed}
-        humidity={weatherData?.humidity}
-        magnitude={weatherData?.magnitude}
+      <ConstructionData
+        weatherData={weatherData}
         treeCount={treeCount}
-        seismicActivity={weatherData?.seismicActivity}
-        floodPrediction={weatherData?.floodPrediction}
         buildCount={buildCount}
-        soilType={mostProbableSoilType}
+        mostProbableSoilType={mostProbableSoilType}
+        // constructionStageData={constructionStageData} // Pass this for use in During and After Construction
       />
-      <DuringConstruction />
-      <AfterConstruction />
-      <ConstructionCarousel />
+
     </div>
   );
 }
