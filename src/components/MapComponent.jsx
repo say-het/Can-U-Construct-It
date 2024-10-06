@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, FeatureGroup, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; // Leaflet CSS
 import { EditControl } from 'react-leaflet-draw';
@@ -9,11 +9,13 @@ import BeforeConstruction from './BeforeConstruction';
 import DuringConstruction from './DuringConstruction';
 import AfterConstruction from './AfterConstruction';
 import ConstructionCarousel from './Curosel';
+// import setErr
 
 const MapComponent = () => {
   const [treeCount, setTreeCount] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
   const [points, setPoints] = useState([]);
+  const [essScore, setEssScore] = useState(null);
   const [buildCount , setBuildingCount] = useState(null);
   const [essData, setEssData] = useState({
     air_quality: null,
@@ -34,6 +36,37 @@ const MapComponent = () => {
   //   // const lon = 72.5714; // Longitude
   
   //   // useEffect(() => {
+    const fetchEssScore = async () => {
+      try {
+        console.log("first");
+        console.log(essData)
+        // Perform the POST request using fetch
+        const response = await fetch('http://localhost:5000/score', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(essData),
+        });
+    
+        // Check if the response status is OK
+        if (!response.ok) {
+          throw new Error('Failed to fetch ESS score');
+        }
+    
+        // Assuming the backend returns the score as JSON
+        const essScore = await response.json(); // Convert the response to JSON
+        console.log('ESS Score:', essScore);
+    
+        // Use the ESS score in the UI
+        setEssScore(essScore.ess_score);
+    
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    
+
     const fetchSoilData = async (coordinates) => {
         try {
         const [longitude, latitude] = coordinates[0];
@@ -51,7 +84,7 @@ const MapComponent = () => {
             setError("Unexpected response structure");
           }
         } catch (err) {
-          setError("Error fetching soil data");
+          // setError("Error fetching soil data");
           console.error(err);
         }
       };
@@ -207,7 +240,12 @@ const MapComponent = () => {
       console.error('Error fetching weather, earthquake, flood, or ESS score data:', error);
     }
   };
-
+  useEffect(() => {
+    if (essData.air_quality !== null) { 
+      // Ensure essData is fully populated before fetching ESS score
+      fetchEssScore(); 
+    }
+  }, [essData]); 
   const handleCreated = (e) => {
     const geoJsonData = e.layer.toGeoJSON();
     const coordinates = geoJsonData.geometry.coordinates[0];
@@ -223,7 +261,9 @@ const MapComponent = () => {
     sendPolygonToBackend(coordinates);
     sendPolygonToBackendForBuildings(coordinates);
     fetchSoilData(coordinates)
-    fetchWeatherData(latitude, longitude);  
+    fetchWeatherData(latitude, longitude); 
+     
+    fetchEssScore();
     // Fetch all necessary data based on selected location
   };
 
@@ -273,9 +313,9 @@ const MapComponent = () => {
         onClick={fetchEssReport}  // Call fetchEssReport on click
         className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
       >
-        ESS
+        ESS 
       </button>
-
+      <p>{essScore}</p>
       <BeforeConstruction
         aqi={weatherData?.aqi}
         temperature={weatherData?.temperature}

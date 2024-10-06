@@ -117,6 +117,32 @@ def get_flood_quackeReport():
     except Exception as e:
         print("Error:", e)
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+
+
+@app.route("/score", methods=["POST"]) 
+@cross_origin()
+def score():
+    try:
+        print("WOEKJN")
+        data = request.get_json()
+
+        ess = calculate_sustainability_score(
+            air_quality=data['air_quality'],
+            temperature=data['temperature'],
+            humidity=data['humidity'],
+            soil_type=data['soil_type'],
+            flood_risk=int(data['flood_risk']),
+            seismic_activity=data['seismic_activity'],
+            wind_patterns=data['wind_patterns']
+        )
+        
+        # Assuming 'ess' is a number or a serializable type, return it as JSON
+        return jsonify({"ess_score": ess})
+    except Exception as e:
+        print(e)
+
+
 @app.route("/getEssScore", methods=["POST"]) 
 @cross_origin()
 def getEssScore():
