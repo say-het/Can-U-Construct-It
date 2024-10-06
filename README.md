@@ -95,6 +95,10 @@ Once a building type is selected, the user is prompted to fill out specific form
 - View the current condition
 ![App Screenshot](https://github.com/Jay-1409/Storage/blob/main/curre.png?raw=true)
 
+- Gathering Data
+  ![image](https://github.com/user-attachments/assets/e2e27161-19e4-4f38-bce5-9c00daf9d845)
+
+
 - Environmental changes
 ![App Screenshot](https://github.com/Jay-1409/Storage/blob/main/aftercons.png?raw=true)
 
