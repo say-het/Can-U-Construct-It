@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaWind, FaCloudSun, FaTree, FaTemperatureHigh, FaTint, FaWater } from 'react-icons/fa';
 
-const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, soilType, buildCount }) => {
+const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, soilType, buildCount, onShowFactoryForm }) => {
   // Function to interpret AQI level
   const getAqiDescription = (aqi) => {
     switch (aqi) {
@@ -88,6 +88,9 @@ const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, 
         </div>
       </div>
     </div>
+    <button onClick={onShowFactoryForm} className="bg-green-500 text-white py-2 px-4 rounded-lg mt-4">
+        Show Factory Form
+      </button>
   </div>
   );
 };

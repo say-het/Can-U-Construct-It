@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AfterConstruction from './AfterConstruction';
+
 const FactoryForm = () => {
   const [formData, setFormData] = useState({
     floorsAbove: '',
@@ -16,9 +17,9 @@ const FactoryForm = () => {
     pm10Emission: 0,
     foundationVolume: 0,
     fuelEmissions: {},
-    totalEmissions: 0, // Store total emissions
-    emissionsWeight: 0, // Store emissions weight from product type
-    impactCategory: '',  // Store impact category
+    totalEmissions: 0, 
+    emissionsWeight: 0,
+    impactCategory: '',
   });
 
   useEffect(() => {
@@ -49,7 +50,6 @@ const FactoryForm = () => {
     }
   };
 
-  // Function to calculate emissions based on the provided formula
   const calculateEmissions = (Q, FC, EF = 3.67) => {
     return Q * FC * EF;
   };
@@ -133,10 +133,10 @@ const FactoryForm = () => {
 
     fuelUsed.forEach((fuel) => {
       const FC = fuelEmissionFactors[fuel] || 0;
-      const Q = 10; // Assuming 10 tons of fuel consumed for calculation
+      const Q = 10; 
       const emissions = calculateEmissions(Q, FC);
       fuelEmissions[fuel] = emissions;
-      totalEmissions += emissions; // Summing up total emissions
+      totalEmissions += emissions;
     });
 
     return { fuelEmissions, totalEmissions };
@@ -145,27 +145,22 @@ const FactoryForm = () => {
   const handleCalculate = () => {
     const { floorsAbove, floorsBelow, baseDepth, fuelUsed, productType, quantityProcessed } = formData;
 
-    // Environmental impact calculation
     const impactData = calculateEnvironmentalImpact(floorsAbove);
 
-    // PM10 emission calculation
-    const pm10Emission = calculatePM10Emission(baseDepth, floorsAbove * 100, 0.01); // Example values
+    const pm10Emission = calculatePM10Emission(baseDepth, floorsAbove * 100, 0.01);
 
-    // Foundation volume calculation based on seismic magnitude
-    const foundationVolume = calculateFoundationVolume(6.5, floorsAbove * 100); // Example magnitude and area
+    const foundationVolume = calculateFoundationVolume(6.5, floorsAbove * 100);
 
-    // Fuel emissions calculation
     const { fuelEmissions, totalEmissions } = calculateFuelEmissions(fuelUsed);
 
-    // Emissions weight calculation for each selected product type
-    const emissionFactor = 0.5; // Example emission factor for demonstration
+    const emissionFactor = 0.5;
     let totalWeight = 0;
     let impactCategory = '';
 
-    productType.forEach(type => {
+    productType.forEach((type) => {
       const { W, impactCategory: cat } = calculateEmissionsWeight(quantityProcessed, emissionFactor, type);
       totalWeight += W;
-      impactCategory = cat; // Overwriting impactCategory to the last one
+      impactCategory = cat; 
     });
 
     setEnvironmentalImpact({
@@ -174,9 +169,9 @@ const FactoryForm = () => {
       pm10Emission,
       foundationVolume,
       fuelEmissions,
-      totalEmissions, // Setting total emissions
-      emissionsWeight: totalWeight, // Setting total emissions weight from product type
-      impactCategory, // Setting impact category
+      totalEmissions,
+      emissionsWeight: totalWeight,
+      impactCategory,
     });
   };
 
@@ -263,7 +258,7 @@ const FactoryForm = () => {
         </button>
       </form>
 
-      {'' && (
+      {''&& (
         <div className="mt-6">
           <h3 className="text-xl font-bold">Impact Results</h3>
           <p>Total Emissions from Fuel: {environmentalImpact.totalEmissions} kg CO₂</p>
@@ -288,9 +283,10 @@ const FactoryForm = () => {
           <p>Foundation Volume: {environmentalImpact.foundationVolume} m³</p>
           <p>Product Emissions Weight: {environmentalImpact.emissionsWeight} kg</p>
           <p>Impact Category: {environmentalImpact.impactCategory}</p>
+
         </div>
       )}
-      <AfterConstruction factoryData={environmentalImpact}/>
+      <AfterConstruction factoryData={environmentalImpact} />
     </div>
   );
 };

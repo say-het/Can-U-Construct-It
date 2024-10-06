@@ -30,6 +30,11 @@
       wind_patterns: null,
     });
 
+    const [isFactoryFormVisible, setIsFactoryFormVisible] = useState(false); // Add this line
+    const toggleFactoryForm = () => {
+      setIsFactoryFormVisible((prevState) => !prevState);
+    };
+
     const [factoryData, setFactoryData] = useState({
       materialUsage: {},
       overallImpact: '',
@@ -387,19 +392,20 @@
         <p>Environmental Sustainibility Score: {essScore}</p>
 
 {/* Pass the calculated factory data to ConstructionData */}
-<BeforeConstruction
-      aqi={weatherData?.aqi}
-      temperature={weatherData?.temperature}
-      windSpeed={weatherData?.windSpeed}
-      humidity={weatherData?.humidity}
-      magnitude={weatherData?.magnitude}
-      treeCount={treeCount}
-      seismicActivity={weatherData?.seismicActivity}
-      floodPrediction={weatherData?.floodPrediction}
-      buildCount={buildCount}
-      soilType={mostProbableSoilType}
-    />
-        <FactoryForm onSubmit={handleFormSubmit} />
+     <BeforeConstruction
+        aqi={weatherData?.aqi}
+        temperature={weatherData?.temperature}
+        windSpeed={weatherData?.windSpeed}
+        humidity={weatherData?.humidity}
+        magnitude={weatherData?.magnitude}
+        treeCount={treeCount}
+        seismicActivity={weatherData?.seismicActivity}
+        floodPrediction={weatherData?.floodPrediction}
+        buildCount={buildCount}
+        soilType={mostProbableSoilType}
+        onShowFactoryForm={toggleFactoryForm} // Pass the toggle function as a prop
+      />
+      {isFactoryFormVisible && <FactoryForm onSubmit={handleFormSubmit} />} {/* Conditionally render the FactoryForm */}
         
       
       </div>
