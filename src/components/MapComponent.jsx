@@ -6,6 +6,9 @@ import 'leaflet-draw/dist/leaflet.draw.css'; // Leaflet Draw CSS
 import axios from 'axios';
 import leafletImage from 'leaflet-image'; // Import leaflet-image
 import BeforeConstruction from './BeforeConstruction';
+import DuringConstruction from './DuringConstruction';
+import AfterConstruction from './AfterConstruction';
+import ConstructionCarousel from './Curosel';
 
 const MapComponent = () => {
   const [treeCount, setTreeCount] = useState(null);
@@ -168,17 +171,21 @@ const MapComponent = () => {
           <p>AQI: {getAqiDescription(weatherData.aqi)}</p>
         </div>
       )} */}
-<div className="w-full max-w-7xl bg-white shadow-xl rounded-xl p-8 mb-12">
-  <BeforeConstruction
-    aqi={weatherData?.aqi}
-    humidity={weatherData?.humidity}
-    treeCount={treeCount}
-    temperature={weatherData?.temperature}
-    windSpeed={weatherData?.windSpeed}
-    soilType={"Clay Loam"} // This can be dynamically fetched or passed
-  />
-</div>
+{/* <div className="w-full max-w-7xl bg-white shadow-xl rounded-xl p-8 mb-12">
+ 
+  
+<ConstructionCarousel
 
+weatherData={weatherData}/>
+</div> */}
+<BeforeConstruction
+aqi={weatherData?.aqi}
+humidity={weatherData?.humidity}
+treeCount={treeCount}
+temperature={weatherData?.temperature}
+windSpeed={weatherData?.windSpeed}
+soilType={"Clay"}
+/>
     </div>
     
   );

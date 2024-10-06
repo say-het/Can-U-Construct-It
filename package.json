@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^1.7.7",
+    "daisyui": "^4.12.12",
     "html2canvas": "^1.4.1",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
