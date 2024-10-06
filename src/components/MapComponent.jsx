@@ -140,7 +140,7 @@ const MapComponent = () => {
         WaterLevel: 10, 
         Elevation: 500, 
         LandCover: "Urban", 
-        SoilType: "Clay", 
+        SoilType: mostProbableSoilType, 
         PopulationDensity: 1000, 
         Infrastructure: "Developed", 
         HistoricalFloods: 2 
@@ -222,8 +222,8 @@ const MapComponent = () => {
     const [longitude, latitude] = coordinates[0];
     sendPolygonToBackend(coordinates);
     sendPolygonToBackendForBuildings(coordinates);
-    fetchWeatherData(latitude, longitude);  
     fetchSoilData(coordinates)
+    fetchWeatherData(latitude, longitude);  
     // Fetch all necessary data based on selected location
   };
 
