@@ -6,6 +6,7 @@ from flask_cors import cross_origin, CORS
 from earthquackmodel import predict_earthquake
 from floodmodel import predict_flood_occurred
 from ess import calculate_sustainability_score
+import requests
 from generateess import generate_report_with_gemini ,  create_pdf_with_table
 
 
@@ -152,6 +153,32 @@ def getEssScore():
         print("Error generating ESS report:", e)
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/count-buildings', methods=['POST'])
+@cross_origin()
+def count_buildings():
+    data = request.get_json()
+    coordinates = data['coordinates']
+    
+    overpass_url = "http://overpass-api.de/api/interpreter"
+    overpass_query = f"""
+    [out:json];
+    (
+      way["building"](poly:"{' '.join([f'{lat} {lon}' for lon, lat in coordinates])}");
+      relation["building"](poly:"{' '.join([f'{lat} {lon}' for lon, lat in coordinates])}");
+    );
+    out body;
+    """
+    
+    try:
+        response = requests.get(overpass_url, params={'data': overpass_query})
+        response.raise_for_status()
+        data = response.json()
+        
+        building_count = len(data.get('elements', []))
+        return jsonify({'building_count': building_count})
+    
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': f'Failed to fetch building data: {str(e)}'}), 500
 
 if __name__ == "__main__":
     app.run(debug=True,port=5000,host='0.0.0.0')

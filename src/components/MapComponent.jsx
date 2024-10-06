@@ -14,6 +14,7 @@ const MapComponent = () => {
   const [treeCount, setTreeCount] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
   const [points, setPoints] = useState([]);
+  const [buildCount , setBuildingCount] = useState(null);
   const [essData, setEssData] = useState({
     air_quality: null,
     temperature: null,
@@ -24,8 +25,56 @@ const MapComponent = () => {
     wind_patterns: null,
   });
   const mapInstance = useRef(null); // Store map instance reference
-
+  // const SoilTypeFetcher = (coordinates) => {
+    
+      const [mostProbableSoilType, setMostProbableSoilType] = useState(null);
+    //   const [error, setError] = useState(null);
+  
+  //   // const lat = 23.0225; // Latitude
+  //   // const lon = 72.5714; // Longitude
+  
+  //   // useEffect(() => {
+    const fetchSoilData = async (coordinates) => {
+        try {
+        const [longitude, latitude] = coordinates[0];
+          const response = await axios.get(
+            `https://api.allorigins.win/get?url=${encodeURIComponent(
+              `https://api-test.openepi.io/soil/type?lat=${latitude}&lon=${longitude}`
+            )}`
+          );
+  
+          const data = JSON.parse(response.data.contents);
+          if (data && data.properties) {
+            const soilData = data.properties;
+            setMostProbableSoilType(soilData.most_probable_soil_type);
+          } else {
+            setError("Unexpected response structure");
+          }
+        } catch (err) {
+          setError("Error fetching soil data");
+          console.error(err);
+        }
+      };
+  
+      // fetchSoilData();
+    // }, [lat, lon]);
+  
+  
   // Fetch ESS Report
+  const sendPolygonToBackendForBuildings = async (coordinates) => {
+    try {
+      const response = await fetch("http://localhost:5000/count-buildings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coordinates }),
+      });
+      const data = await response.json();
+      setBuildingCount(data.building_count); // Assuming the backend sends building_count
+    } catch (error) {
+      console.error("Error counting buildings:", error);
+    }
+  };
+
   const fetchEssReport = async () => {
     try {
       console.log(essData)
@@ -143,7 +192,7 @@ const MapComponent = () => {
 
       // Update weatherData state
       setWeatherData({
-        temperature: weatherResponse.data.main.temp,
+         temperature: weatherResponse.data.main.temp,
         humidity: weatherResponse.data.main.humidity,
         windSpeed: weatherResponse.data.wind.speed,
         windDeg: weatherResponse.data.wind.deg,
@@ -172,7 +221,10 @@ const MapComponent = () => {
 
     const [longitude, latitude] = coordinates[0];
     sendPolygonToBackend(coordinates);
-    fetchWeatherData(latitude, longitude);  // Fetch all necessary data based on selected location
+    sendPolygonToBackendForBuildings(coordinates);
+    fetchWeatherData(latitude, longitude);  
+    fetchSoilData(coordinates)
+    // Fetch all necessary data based on selected location
   };
 
   return (
@@ -226,18 +278,21 @@ const MapComponent = () => {
 
       <BeforeConstruction
         aqi={weatherData?.aqi}
-        temp={weatherData?.temperature}
+        temperature={weatherData?.temperature}
         windSpeed={weatherData?.windSpeed}
         humidity={weatherData?.humidity}
         magnitude={weatherData?.magnitude}
+        treeCount={treeCount}
         seismicActivity={weatherData?.seismicActivity}
         floodPrediction={weatherData?.floodPrediction}
+        buildCount={buildCount}
+        soilType={mostProbableSoilType}
       />
       <DuringConstruction />
       <AfterConstruction />
       <ConstructionCarousel />
     </div>
   );
-};
+}
 
 export default MapComponent;

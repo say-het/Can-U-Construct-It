@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaWind, FaCloudSun, FaTree, FaTemperatureHigh, FaTint, FaWater } from 'react-icons/fa';
 
-const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, soilType }) => {
+const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, soilType, buildCount }) => {
   // Function to interpret AQI level
   const getAqiDescription = (aqi) => {
     switch (aqi) {
@@ -79,7 +79,19 @@ const BeforeConstruction = ({ aqi, humidity, treeCount, temperature, windSpeed, 
             <p className="text-gray-600">{soilType ? soilType : 'Loading...'}</p>
           </div>
         </div>
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md flex items-center mb-4 w-1/2 lg:w-1/3 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105">
+          <FaTree className="text-blue-600 text-3xl mr-4" />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              Number of Buildings
+            </h3>
+            <p className="text-gray-600">
+              {buildCount !== null ? buildCount : "Loading..."}
+            </p>
+          </div>
+        </div>
       </div>
+      
     </div>
   );
 };
