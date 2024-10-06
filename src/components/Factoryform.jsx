@@ -175,6 +175,63 @@ const FactoryForm = () => {
     });
   };
 
+
+  useEffect( () => {
+    const ansycsent = async () => {
+     console.log(environmentalImpact);
+     let body = JSON.stringify({
+         floorsAbove : formData.floorsBelow,
+         floorsBelow : formData.floorsBelow,
+         baseDepth : formData.baseDepth,
+         productType : formData.productType,
+         overallImpact : environmentalImpact.overallImpact,
+         pm10Emission : environmentalImpact.pm10Emission + " kg",
+         foundationVolume : environmentalImpact.foundationVolume + ' cubic meters',
+         fuel : 'Coal',
+         totalEmissions : environmentalImpact.totalEmissions + " kg",
+         materialWastePerFloor : environmentalImpact.materialUsage,
+         environmentalImpactCategory : environmentalImpact.impactCategory
+     })}
+    ansycsent()
+   }, [environmentalImpact]);
+
+  const getReport = async (e) => {
+    e.preventDefault();
+    console.log("yesssss")
+    let body = JSON.stringify({
+        floorsAbove : formData.floorsBelow,
+        floorsBelow : formData.floorsBelow,
+        baseDepth : formData.baseDepth,
+        productType : formData.productType,
+        overallImpact : environmentalImpact.overallImpact,
+        pm10Emission : environmentalImpact.pm10Emission + " kg",
+        foundationVolume : environmentalImpact.foundationVolume + ' cubic meters',
+        fuel : 'Coal',
+        totalEmissions : environmentalImpact.totalEmissions + " kg",
+        materialWastePerFloor : environmentalImpact.materialUsage,
+        environmentalImpactCategory : environmentalImpact.impactCategory
+    })
+    if(environmentalImpact.foundationVolume !== 0) {
+        console.log('yes')
+        console.log(body)
+        let response = await fetch("http://localhost:5000/getFactoryReport",{
+            method : "POST",
+            body : body,
+            headers : {
+                "Content-Type" : 'application/json'
+            }
+        })
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Environmental_Sustainability_Report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+  }
+
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Factory Environmental Impact Assessment</h2>
@@ -287,6 +344,13 @@ const FactoryForm = () => {
         </div>
       )}
       <AfterConstruction factoryData={environmentalImpact} />
+      
+      <button
+          onClick={getReport}  // Call fetchEssReport on click
+          className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
+        >
+          Generate Final Report
+          </button>      
     </div>
   );
 };

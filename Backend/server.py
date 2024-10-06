@@ -9,6 +9,8 @@ from ess import calculate_sustainability_score
 import requests
 from generateess import generate_report_with_gemini ,  create_pdf_with_table
 from imageGenerate import generate_marked_image
+from geteiafactory import generate_report_with_gemini1
+from genFactoryReport import create_pdf_from_reportEIAFactory
 
 app = Flask(__name__)
 CORS(app)
@@ -201,6 +203,42 @@ def getEssScore() :
         return send_file(pdf_filename, as_attachment=True)
     except : 
         print("YeS score is not called")
+
+@app.route("/getFactoryReport",methods=["POST"])
+@cross_origin()
+def getFactoryReport(): 
+    try :
+        data = request.get_json()
+        print(data) 
+        print("api called")
+        ess = calculate_sustainability_score(
+        air_quality=40,         # AQI
+        temperature=25,         # °C
+        humidity=60,            # %
+        soil_type='loam',       # Soil type
+        flood_risk=0.1,         # Flood risk (0-1)
+        seismic_activity=0.2,   # Seismic activity (0-1)
+        wind_patterns=7         # Wind speed (m/s)
+        )
+        report_data = {
+            "air_quality": 40,
+            "temperature": 25,
+            "humidity": 60,
+            "soil_type": 'loam',
+            "flood_risk": 0.1,
+            "seismic_activity": 0.2,
+            "wind_patterns": 7,
+            "ess_score": ess
+        }
+        reportOfEss = generate_report_with_gemini(report_data)
+        print(reportOfEss)
+        relatedReport = generate_report_with_gemini1(reportOfEss)
+        print(relatedReport)
+        reportFile = create_pdf_from_reportEIAFactory(relatedReport,image_file_path=r'C:\Users\Het Ashishbhai Modi\Desktop\NASAAA\my-project\project\NASAAA\Backend\material_waste_plot.png')
+        return send_file(reportFile,as_attachment=True)
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
 # def getEssScore():
 #     try:
 #         print("yesdjgdhfhdtfth")

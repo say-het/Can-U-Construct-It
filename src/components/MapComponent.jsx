@@ -438,9 +438,7 @@
         onShowFactoryForm={toggleFactoryForm} // Pass the toggle function as a prop
       />
       {isFactoryFormVisible && <FactoryForm onSubmit={handleFormSubmit} />} {/* Conditionally render the FactoryForm */}
-        
-      
-      </div>
+        </div>
     );  
   }
 
