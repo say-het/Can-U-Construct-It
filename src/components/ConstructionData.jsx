@@ -9,6 +9,7 @@ const ConstructionData = ({
   buildCount,
   mostProbableSoilType,
   constructionStageData,
+  factoryData
 }) => {
   // Carousel logic starts here
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -27,7 +28,7 @@ const ConstructionData = ({
       soilType={mostProbableSoilType}
     />,
     <DuringConstruction treeCount={treeCount} buildCount={buildCount} />,
-    <AfterConstruction treeCount={treeCount} buildCount={buildCount} />,
+    <AfterConstruction treeCount={treeCount} buildCount={buildCount} factoryData={factoryData}/>,
   ];
 
   const handleNext = () => {

@@ -1,93 +1,123 @@
-import React from 'react';
-import { FaCloudSun, FaWind, FaTemperatureHigh, FaTint, FaSmog, FaTree, FaRecycle } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import {
+  FaCloudSun,
+  FaWind,
+  FaTemperatureHigh,
+  FaTint,
+  FaSmog,
+  FaTree,
+  FaRecycle,
+  FaIndustry
+} from 'react-icons/fa';
 
-const AfterConstruction = ({ aqiAfter, pm10, pm25, temperature, humidity, windSpeed, treeCount, envEffects }) => {
-  // Function to interpret AQI level
-  const getAqiDescription = (aqi) => {
-    const descriptions = {
-      1: 'Good',
-      2: 'Fair',
-      3: 'Moderate',
-      4: 'Poor',
-      5: 'Very Poor',
-    };
-    return descriptions[aqi] || 'Unknown';
-  };
+const AfterConstruction = ({ factoryData }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if factoryData has been populated
+    if (factoryData && Object.keys(factoryData).length > 0) {
+      setIsLoading(false); // Stop loading if data is present
+    }
+  }, [factoryData]); // Dependency on factoryData
+
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-7xl bg-white shadow-2xl rounded-2xl p-10 mb-8 h-[450px] overflow-hidden transition duration-300 ease-in-out">
+        <h2 className="text-3xl font-bold text-green-700 mb-6 text-center">After Construction</h2>
+        <p className="text-center text-gray-600">Loading data, please wait...</p>
+      </div>
+    );
+  }
+
+  const {
+    emissionsWeight,
+    foundationVolume,
+    fuelEmissions,
+    impactCategory,
+    materialUsage,
+    overallImpact,
+    pm10Emission,
+    totalEmissions
+  } = factoryData;
 
   return (
     <div className="w-full max-w-7xl bg-white shadow-2xl rounded-2xl p-10 mb-8 h-[450px] overflow-hidden transition duration-300 ease-in-out">
       <h2 className="text-3xl font-bold text-green-700 mb-6 text-center">After Construction</h2>
 
       <div className="flex flex-wrap justify-between items-start h-full">
-        {/* AQI After Construction */}
+        {/* Emissions Weight */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
-          <FaSmog className="text-red-600 text-3xl mr-4" />
+          <FaIndustry className="text-gray-600 text-3xl mr-4" />
           <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">AQI After Construction</h3>
-            <p className="text-gray-600">{aqiAfter ? `${aqiAfter} (${getAqiDescription(aqiAfter)})` : 'Loading...'}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Emissions Weight</h3>
+            <p className="text-gray-600">{emissionsWeight ? `${emissionsWeight} kg` : 'N/A'}</p>
           </div>
         </div>
 
-        {/* PM10 Level */}
+        {/* Foundation Volume */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
-          <FaCloudSun className="text-yellow-600 text-3xl mr-4" />
+          <FaIndustry className="text-gray-600 text-3xl mr-4" />
           <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">PM10 Level</h3>
-            <p className="text-gray-600">{pm10 ? `${pm10} µg/m³` : 'Loading...'}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Foundation Volume</h3>
+            <p className="text-gray-600">{foundationVolume ? `${foundationVolume} m³` : 'N/A'}</p>
           </div>
         </div>
 
-        {/* PM2.5 Level */}
+        {/* Fuel Emissions (Coal) */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
-          <FaCloudSun className="text-yellow-600 text-3xl mr-4" />
+          <FaRecycle className="text-red-600 text-3xl mr-4" />
           <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">PM2.5 Level</h3>
-            <p className="text-gray-600">{pm25 ? `${pm25} µg/m³` : 'Loading...'}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Fuel Emissions (Coal)</h3>
+            <p className="text-gray-600">{fuelEmissions?.Coal ? `${fuelEmissions.Coal} kg` : 'N/A'}</p>
           </div>
         </div>
 
-        {/* Temperature */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
-          <FaTemperatureHigh className="text-blue-600 text-3xl mr-4" />
-          <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Temperature</h3>
-            <p className="text-gray-600">{temperature != null ? `${temperature}°C` : 'Loading...'}</p>
-          </div>
-        </div>
-
-        {/* Humidity */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
-          <FaTint className="text-blue-600 text-3xl mr-4" />
-          <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Humidity</h3>
-            <p className="text-gray-600">{humidity != null ? `${humidity}%` : 'Loading...'}</p>
-          </div>
-        </div>
-
-        {/* Wind Speed */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
-          <FaWind className="text-blue-600 text-3xl mr-4" />
-          <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Wind Speed</h3>
-            <p className="text-gray-600">{windSpeed ? `${windSpeed} km/h` : 'Loading...'}</p>
-          </div>
-        </div>
-
-        {/* Tree Count */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
-          <FaTree className="text-green-600 text-3xl mr-4" />
-          <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Tree Count</h3>
-            <p className="text-gray-600">{treeCount != null ? treeCount : 'Loading...'}</p>
-          </div>
-        </div>
-
-        {/* Environmental Effects */}
+        {/* Impact Category */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
           <FaRecycle className="text-green-600 text-3xl mr-4" />
           <div>
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">Environmental Effects</h3>
-            <p className="text-gray-600">{envEffects ? envEffects : 'Loading...'}</p>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Impact Category</h3>
+            <p className="text-gray-600">{impactCategory || 'N/A'}</p>
+          </div>
+        </div>
+
+        {/* Material Usage */}
+        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
+          <FaRecycle className="text-green-600 text-3xl mr-4" />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Material Usage</h3>
+            <p className="text-gray-600">
+              Concrete: {materialUsage?.Concrete || '0'} kg, Steel: {materialUsage?.Steel || '0'} kg, 
+              Wood: {materialUsage?.Wood || '0'} kg, Brick: {materialUsage?.Brick || '0'} kg, 
+              Glass: {materialUsage?.Glass || '0'} kg
+            </p>
+          </div>
+        </div>
+
+        {/* Overall Impact */}
+        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
+          <FaRecycle className="text-green-600 text-3xl mr-4" />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Overall Impact</h3>
+            <p className="text-gray-600">{overallImpact || 'N/A'}</p>
+          </div>
+        </div>
+
+        {/* PM10 Emission */}
+        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
+          <FaCloudSun className="text-yellow-600 text-3xl mr-4" />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">PM10 Emission</h3>
+            <p className="text-gray-600">{pm10Emission ? `${pm10Emission} µg/m³` : 'N/A'}</p>
+          </div>
+        </div>
+
+        {/* Total Emissions */}
+        <div className="bg-gray-100 p-6 rounded-lg shadow-md flex items-center mb-6 w-full sm:w-1/2 lg:w-1/4 hover:shadow-xl transition-all duration-300 ease-in-out">
+          <FaRecycle className="text-red-600 text-3xl mr-4" />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Emissions</h3>
+            <p className="text-gray-600">{totalEmissions ? `${totalEmissions} kg` : 'N/A'}</p>
           </div>
         </div>
       </div>
