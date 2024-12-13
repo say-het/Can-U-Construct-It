@@ -1,7 +1,3 @@
-
-
-## Youtube Demo :- https://youtu.be/IxzMTv-L9bQ
-
 ## Introduction
 Our website focuses on environmental sustainability by using a map-based interface to collect user input. It allows users to analyze the environmental conditions of a selected area through an *Environmental Sustainability Score (ESS)* system. The system factors in:
 
