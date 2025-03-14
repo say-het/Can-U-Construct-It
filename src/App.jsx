@@ -4,7 +4,7 @@ import MapComponent from './components/MapComponent';
 import BeforeConstruction from './components/BeforeConstruction';
 import DuringConstruction from './components/DuringConstruction';
 import EnvironmentalImpactForm from './components/InputForm';
-import Navbar from './components/navbar';
+// import Navbar from './components/navbar';
 import AfterConstruction from './components/AfterConstruction';
 
 const App = () => {

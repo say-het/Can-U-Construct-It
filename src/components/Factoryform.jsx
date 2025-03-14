@@ -195,32 +195,35 @@ const FactoryForm = () => {
     ansycsent()
    }, [environmentalImpact]);
 
-  const getReport = async (e) => {
+   const getReport = async (e) => {
     e.preventDefault();
-    console.log("yesssss")
+
     let body = JSON.stringify({
-        floorsAbove : formData.floorsBelow,
-        floorsBelow : formData.floorsBelow,
-        baseDepth : formData.baseDepth,
-        productType : formData.productType,
-        overallImpact : environmentalImpact.overallImpact,
-        pm10Emission : environmentalImpact.pm10Emission + " kg",
-        foundationVolume : environmentalImpact.foundationVolume + ' cubic meters',
-        fuel : 'Coal',
-        totalEmissions : environmentalImpact.totalEmissions + " kg",
-        materialWastePerFloor : environmentalImpact.materialUsage,
-        environmentalImpactCategory : environmentalImpact.impactCategory
-    })
-    if(environmentalImpact.foundationVolume !== 0) {
-        console.log('yes')
-        console.log(body)
-        let response = await fetch("http://localhost:5000/getFactoryReport",{
-            method : "POST",
-            body : body,
-            headers : {
-                "Content-Type" : 'application/json'
+        floorsAbove: formData.floorsAbove,  // Use floorsAbove correctly
+        floorsBelow: formData.floorsBelow,  // Use floorsBelow correctly
+        baseDepth: formData.baseDepth,
+        productType: formData.productType,
+        overallImpact: environmentalImpact.overallImpact,
+        pm10Emission: environmentalImpact.pm10Emission + " kg",
+        foundationVolume: environmentalImpact.foundationVolume + ' cubic meters',
+        fuel: 'Coal',  // Assuming this is hardcoded for now
+        totalEmissions: environmentalImpact.totalEmissions + " kg",
+        materialWastePerFloor: environmentalImpact.materialUsage,
+        environmentalImpactCategory: environmentalImpact.impactCategory
+    });
+
+    if (environmentalImpact.foundationVolume !== 0) {
+        console.log('yes');
+        console.log(body);
+
+        let response = await fetch("http://localhost:5000/getFactoryReport", {
+            method: "POST",
+            body: body,
+            headers: {
+                "Content-Type": "application/json"
             }
-        })
+        });
+
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -230,7 +233,8 @@ const FactoryForm = () => {
         a.click();
         a.remove();
     }
-  }
+};
+
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
